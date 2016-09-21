@@ -4,7 +4,7 @@
     "Tobias Reich <tobias@electerious.com>"
   ],
   "description": "Easy-to-use context-menu for your website or webapp",
-  "main": "dist/basicContext.min.js",
+  "main": "dist/basicContext.js",
   "keywords": [
     "context",
     "menu",
