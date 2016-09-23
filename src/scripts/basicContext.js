@@ -67,8 +67,8 @@
 		if (item.type === ITEM) {
 
 			html = `
-		       <tr class='basicContext__item ${ item.class}'>
-		           <td class='basicContext__data' data-num='${ item.num}'>${span}${item.title}</td>
+		       <tr class='basicContext__item ${ item.class}' data-num='${ item.num}'>
+		           <td class='basicContext__data'>${span}${item.title}</td>
 		       </tr>
 		       `
 
@@ -183,8 +183,8 @@
 		if (item.visible === false) return false
 		if (item.disabled === true) return false
 
-		dom(`td[data-num='${item.num}']`).onclick = item.fn
-		dom(`td[data-num='${item.num}']`).oncontextmenu = item.fn
+		dom(`tr[data-num='${item.num}']`).onclick = item.fn
+		dom(`tr[data-num='${item.num}']`).oncontextmenu = item.fn
 
 		return true
 

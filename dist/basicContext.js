@@ -63,7 +63,7 @@
 				// Generate item
 				if (item.type === ITEM) {
 
-						html = '\n\t\t       <tr class=\'basicContext__item ' + item['class'] + '\'>\n\t\t           <td class=\'basicContext__data\' data-num=\'' + item.num + '\'>' + span + item.title + '</td>\n\t\t       </tr>\n\t\t       ';
+						html = '\n\t\t       <tr class=\'basicContext__item ' + item['class'] + '\' data-num=\'' + item.num + '\'>\n\t\t           <td class=\'basicContext__data\'>' + span + item.title + '</td>\n\t\t       </tr>\n\t\t       ';
 				} else if (item.type === SEPARATOR) {
 
 						html = '\n\t\t       <tr class=\'basicContext__item basicContext__item--separator\'></tr>\n\t\t       ';
@@ -161,8 +161,8 @@
 				if (item.visible === false) return false;
 				if (item.disabled === true) return false;
 
-				dom('td[data-num=\'' + item.num + '\']').onclick = item.fn;
-				dom('td[data-num=\'' + item.num + '\']').oncontextmenu = item.fn;
+				dom('tr[data-num=\'' + item.num + '\']').onclick = item.fn;
+				dom('tr[data-num=\'' + item.num + '\']').oncontextmenu = item.fn;
 
 				return true;
 		};
