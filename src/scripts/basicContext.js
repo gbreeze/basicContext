@@ -6,7 +6,7 @@
 
 })('basicContext', function () {
 
-
+	let closeOnTouchMove = true
 	let overflow = null
 
 	const ITEM = 'item',
@@ -67,7 +67,7 @@
 		if (item.type === ITEM) {
 
 			html = `
-		       <tr class='basicContext__item ${ item.class}' data-num='${ item.num}'>
+		       <tr class='basicContext__item ${ item.class}' data-num='${item.num}'>
 		           <td class='basicContext__data'>${span}${item.title}</td>
 		       </tr>
 		       `
@@ -226,6 +226,11 @@
 		// Bind click on items
 		items.forEach(bind)
 
+		// Bind touchmove
+		if (closeOnTouchMove) {
+			document.body.addEventListener("touchmove", close)
+		}
+
 		// Do not trigger default event or further propagation
 		if (typeof e.preventDefault === 'function') e.preventDefault()
 		if (typeof e.stopPropagation === 'function') e.stopPropagation()
@@ -260,6 +265,10 @@
 			overflow = null
 		}
 
+		if (closeOnTouchMove) {
+			document.body.removeEventListener("touchmove", close)
+		}
+
 		return true
 
 	}
@@ -269,6 +278,8 @@
 		SEPARATOR,
 		show,
 		visible,
-		close
+		close,
+		closeOnTouchMove
 	}
+	
 })

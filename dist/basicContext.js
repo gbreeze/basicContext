@@ -5,6 +5,7 @@
 		if (typeof module != 'undefined' && module.exports) module.exports = definition();else if (typeof define == 'function' && define.amd) define(definition);else window[name] = definition();
 })('basicContext', function () {
 
+		var closeOnTouchMove = true;
 		var overflow = null;
 
 		var ITEM = 'item',
@@ -203,6 +204,11 @@
 				// Bind click on items
 				items.forEach(bind);
 
+				// Bind touchmove
+				if (closeOnTouchMove) {
+						document.body.addEventListener("touchmove", close);
+				}
+
 				// Do not trigger default event or further propagation
 				if (typeof e.preventDefault === 'function') e.preventDefault();
 				if (typeof e.stopPropagation === 'function') e.stopPropagation();
@@ -234,6 +240,10 @@
 						overflow = null;
 				}
 
+				if (closeOnTouchMove) {
+						document.body.removeEventListener("touchmove", close);
+				}
+
 				return true;
 		};
 
@@ -242,6 +252,7 @@
 				SEPARATOR: SEPARATOR,
 				show: show,
 				visible: visible,
-				close: close
+				close: close,
+				closeOnTouchMove: closeOnTouchMove
 		};
 });
