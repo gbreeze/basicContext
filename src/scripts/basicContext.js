@@ -207,6 +207,11 @@
 		// Cache the context
 		let context = dom()
 
+		// Set touch style
+		if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
+			context.classList.add("touch")
+		}
+
 		// Calculate position
 		let position = getPosition(e, context)
 
@@ -281,5 +286,5 @@
 		close,
 		closeOnTouchMove
 	}
-	
+
 })
