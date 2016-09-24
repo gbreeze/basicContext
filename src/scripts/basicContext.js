@@ -244,7 +244,7 @@
 
 		// Bind touchmove
 		if (closeOnTouchMove) {
-			document.body.addEventListener("touchmove", close)
+			document.body.addEventListener("touchmove", fnClose)
 		}
 
 		// Do not trigger default event or further propagation
