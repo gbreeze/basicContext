@@ -137,9 +137,19 @@
 						height: context.offsetHeight
 				};
 
-				// Fix position based on context and browser size
-				if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width);
-				if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height);
+				// Set position for touch devices
+				if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
+						x = x - contextSize.width;
+						y = y - contextSize.height;
+
+						// Fix position based on context and browser size
+						if (x < 0) x = 0;
+						if (y < 0) y = y + contextSize.height;
+				} else {
+						// Fix position based on context and browser size
+						if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width);
+						if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height);
+				}
 
 				// Make context scrollable and start at the top of the browser
 				// when context is higher than the browser
@@ -184,6 +194,11 @@
 
 				// Cache the context
 				var context = dom();
+
+				// Set touch style
+				if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
+						context.classList.add("touch");
+				}
 
 				// Calculate position
 				var position = getPosition(e, context);
