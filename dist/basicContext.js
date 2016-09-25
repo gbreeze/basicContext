@@ -17,6 +17,11 @@
 				return document.querySelector('.basicContext ' + elem);
 		};
 
+		var isTouchEvent = function isTouchEvent(e) {
+
+				return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : 'ontouchstart' in document.documentElement;
+		};
+
 		var valid = function valid() {
 				var item = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
@@ -138,7 +143,7 @@
 				};
 
 				// Set position for touch devices
-				if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
+				if (isTouchEvent(e)) {
 						x = x - contextSize.width;
 						y = y - contextSize.height;
 
@@ -196,7 +201,7 @@
 				var context = dom();
 
 				// Set touch style
-				if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
+				if (isTouchEvent(e)) {
 						context.classList.add("touch");
 				}
 
@@ -221,7 +226,7 @@
 
 				// Bind touchmove
 				if (closeOnTouchMove) {
-						document.body.addEventListener("touchmove", close);
+						document.body.addEventListener("touchmove", fnClose);
 				}
 
 				// Do not trigger default event or further propagation

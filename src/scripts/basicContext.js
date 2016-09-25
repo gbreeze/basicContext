@@ -18,6 +18,12 @@
 
 	}
 
+	const isTouchEvent = function (e) {
+
+		return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : 'ontouchstart' in document.documentElement
+
+	}
+
 	const valid = function (item = {}) {
 
 		let emptyItem = (Object.keys(item).length === 0 ? true : false)
@@ -159,18 +165,18 @@
 		}
 
 		// Set position for touch devices
-		if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
-			x = x - contextSize.width;
-			y = y - contextSize.height;
+		if (isTouchEvent(e)) {
+			x = x - contextSize.width
+			y = y - contextSize.height
 
 			// Fix position based on context and browser size
-			if (x < 0) x = 0;
-			if (y < 0) y = y + contextSize.height;
+			if (x < 0) x = 0
+			if (y < 0) y = y + contextSize.height
 		}
 		else {
 			// Fix position based on context and browser size
-			if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width);
-			if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height);
+			if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width)
+			if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height)
 		}
 
 		// Make context scrollable and start at the top of the browser
@@ -219,7 +225,7 @@
 		let context = dom()
 
 		// Set touch style
-		if (e.originalEvent && e.originalEvent.type == "touchstart" || e.type == "touchstart") {
+		if (isTouchEvent(e)) {
 			context.classList.add("touch")
 		}
 
