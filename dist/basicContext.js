@@ -220,9 +220,11 @@
 				if (elem == null || elem.length === 0) return false;else return true;
 		};
 
-		var close = function close() {
+		var close = function close(event) {
 
 				if (visible() === false) return false;
+
+				event.preventDefault();
 
 				var container = document.querySelector('.basicContextContainer');
 

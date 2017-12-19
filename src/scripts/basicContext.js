@@ -246,9 +246,11 @@
 
 	}
 
-	const close = function () {
+	const close = function (event) {
 
 		if (visible() === false) return false
+
+		event.preventDefault()
 
 		let container = document.querySelector('.basicContextContainer')
 
