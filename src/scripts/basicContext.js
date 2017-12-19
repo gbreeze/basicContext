@@ -6,7 +6,7 @@
 
 })('basicContext', function () {
 
-
+	let closeOnTouchMove = true
 	let overflow = null
 
 	const ITEM = 'item',
@@ -15,6 +15,12 @@
 	const dom = function (elem = '') {
 
 		return document.querySelector('.basicContext ' + elem)
+
+	}
+
+	const isTouchEvent = function (e) {
+
+		return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : 'ontouchstart' in document.documentElement
 
 	}
 
@@ -67,8 +73,8 @@
 		if (item.type === ITEM) {
 
 			html = `
-		       <tr class='basicContext__item ${ item.class}'>
-		           <td class='basicContext__data' data-num='${ item.num}'>${span}${item.title}</td>
+		       <tr class='basicContext__item ${ item.class}' data-num='${item.num}'>
+		           <td class='basicContext__data'>${span}${item.title}</td>
 		       </tr>
 		       `
 
@@ -158,9 +164,20 @@
 			height: context.offsetHeight
 		}
 
-		// Fix position based on context and browser size
-		if ((x + contextSize.width) > browserSize.width) x = x - ((x + contextSize.width) - browserSize.width)
-		if ((y + contextSize.height) > browserSize.height) y = y - ((y + contextSize.height) - browserSize.height)
+		// Set position for touch devices
+		if (isTouchEvent(e)) {
+			x = x - contextSize.width
+			y = y - contextSize.height
+
+			// Fix position based on context and browser size
+			if (x < 0) x = 0
+			if (y < 0) y = y + contextSize.height
+		}
+		else {
+			// Fix position based on context and browser size
+			if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width)
+			if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height)
+		}
 
 		// Make context scrollable and start at the top of the browser
 		// when context is higher than the browser
@@ -183,8 +200,8 @@
 		if (item.visible === false) return false
 		if (item.disabled === true) return false
 
-		dom(`td[data-num='${item.num}']`).onclick = item.fn
-		dom(`td[data-num='${item.num}']`).oncontextmenu = item.fn
+		dom(`tr[data-num='${item.num}']`).onclick = item.fn
+		dom(`tr[data-num='${item.num}']`).oncontextmenu = item.fn
 
 		return true
 
@@ -207,6 +224,11 @@
 		// Cache the context
 		let context = dom()
 
+		// Set touch style
+		if (isTouchEvent(e)) {
+			context.classList.add("touch")
+		}
+
 		// Calculate position
 		let position = getPosition(e, context)
 
@@ -225,6 +247,11 @@
 
 		// Bind click on items
 		items.forEach(bind)
+
+		// Bind touchmove
+		if (closeOnTouchMove) {
+			document.body.addEventListener("touchmove", fnClose)
+		}
 
 		// Do not trigger default event or further propagation
 		if (typeof e.preventDefault === 'function') e.preventDefault()
@@ -262,6 +289,10 @@
 			overflow = null
 		}
 
+		if (closeOnTouchMove) {
+			document.body.removeEventListener("touchmove", close)
+		}
+
 		return true
 
 	}
@@ -271,6 +302,8 @@
 		SEPARATOR,
 		show,
 		visible,
-		close
+		close,
+		closeOnTouchMove
 	}
+
 })
