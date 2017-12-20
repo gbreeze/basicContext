@@ -5,6 +5,7 @@
 		if (typeof module != 'undefined' && module.exports) module.exports = definition();else if (typeof define == 'function' && define.amd) define(definition);else window[name] = definition();
 })('basicContext', function () {
 
+		var closeOnTouchMove = true;
 		var overflow = null;
 
 		var ITEM = 'item',
@@ -14,6 +15,11 @@
 				var elem = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 
 				return document.querySelector('.basicContext ' + elem);
+		};
+
+		var isTouchEvent = function isTouchEvent(e) {
+
+				return e.sourceCapabilities ? e.sourceCapabilities.firesTouchEvents : 'ontouchstart' in document.documentElement;
 		};
 
 		var valid = function valid() {
@@ -63,7 +69,7 @@
 				// Generate item
 				if (item.type === ITEM) {
 
-						html = '\n\t\t       <tr class=\'basicContext__item ' + item['class'] + '\'>\n\t\t           <td class=\'basicContext__data\' data-num=\'' + item.num + '\'>' + span + item.title + '</td>\n\t\t       </tr>\n\t\t       ';
+						html = '\n\t\t       <tr class=\'basicContext__item ' + item['class'] + '\' data-num=\'' + item.num + '\'>\n\t\t           <td class=\'basicContext__data\'>' + span + item.title + '</td>\n\t\t       </tr>\n\t\t       ';
 				} else if (item.type === SEPARATOR) {
 
 						html = '\n\t\t       <tr class=\'basicContext__item basicContext__item--separator\'></tr>\n\t\t       ';
@@ -136,9 +142,19 @@
 						height: context.offsetHeight
 				};
 
-				// Fix position based on context and browser size
-				if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width);
-				if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height);
+				// Set position for touch devices
+				if (isTouchEvent(e)) {
+						x = x - contextSize.width;
+						y = y - contextSize.height;
+
+						// Fix position based on context and browser size
+						if (x < 0) x = 0;
+						if (y < 0) y = y + contextSize.height;
+				} else {
+						// Fix position based on context and browser size
+						if (x + contextSize.width > browserSize.width) x = x - (x + contextSize.width - browserSize.width);
+						if (y + contextSize.height > browserSize.height) y = y - (y + contextSize.height - browserSize.height);
+				}
 
 				// Make context scrollable and start at the top of the browser
 				// when context is higher than the browser
@@ -161,8 +177,8 @@
 				if (item.visible === false) return false;
 				if (item.disabled === true) return false;
 
-				dom('td[data-num=\'' + item.num + '\']').onclick = item.fn;
-				dom('td[data-num=\'' + item.num + '\']').oncontextmenu = item.fn;
+				dom('tr[data-num=\'' + item.num + '\']').onclick = item.fn;
+				dom('tr[data-num=\'' + item.num + '\']').oncontextmenu = item.fn;
 
 				return true;
 		};
@@ -184,6 +200,11 @@
 				// Cache the context
 				var context = dom();
 
+				// Set touch style
+				if (isTouchEvent(e)) {
+						context.classList.add("touch");
+				}
+
 				// Calculate position
 				var position = getPosition(e, context);
 
@@ -203,6 +224,11 @@
 				// Bind click on items
 				items.forEach(bind);
 
+				// Bind touchmove
+				if (closeOnTouchMove) {
+						document.body.addEventListener("touchmove", fnClose);
+				}
+
 				// Do not trigger default event or further propagation
 				if (typeof e.preventDefault === 'function') e.preventDefault();
 				if (typeof e.stopPropagation === 'function') e.stopPropagation();
@@ -220,9 +246,11 @@
 				if (elem == null || elem.length === 0) return false;else return true;
 		};
 
-		var close = function close() {
+		var close = function close(event) {
 
 				if (visible() === false) return false;
+
+				event.preventDefault();
 
 				var container = document.querySelector('.basicContextContainer');
 
@@ -234,6 +262,10 @@
 						overflow = null;
 				}
 
+				if (closeOnTouchMove) {
+						document.body.removeEventListener("touchmove", close);
+				}
+
 				return true;
 		};
 
@@ -242,6 +274,7 @@
 				SEPARATOR: SEPARATOR,
 				show: show,
 				visible: visible,
-				close: close
+				close: close,
+				closeOnTouchMove: closeOnTouchMove
 		};
 });
